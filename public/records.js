@@ -69,7 +69,8 @@ document.getElementById("recordForm").addEventListener("submit", function (event
     .catch(error => console.error("Error inserting record:", error));
 });
 
-// Fetch and Display Records
+//  Fetch and Display Records
+
 function fetchRecords() {
     const tableName = document.getElementById("tableDropdown").value;
     if (!tableName) return alert("Please select a table.");
@@ -91,23 +92,53 @@ function fetchRecords() {
             // Create Header Row
             const headers = Object.keys(data.records[0]);
             const headerRow = document.createElement("tr");
+
             headers.forEach(header => {
                 const th = document.createElement("th");
                 th.textContent = header;
                 headerRow.appendChild(th);
             });
+
+            // Add Delete Column
+            const deleteTh = document.createElement("th");
+            deleteTh.textContent = "Actions";
+            headerRow.appendChild(deleteTh);
             tableHead.appendChild(headerRow);
 
             // Create Data Rows
             data.records.forEach(record => {
                 const tr = document.createElement("tr");
+
                 headers.forEach(header => {
                     const td = document.createElement("td");
                     td.textContent = record[header];
                     tr.appendChild(td);
                 });
+
+                // Add Delete Button
+                const deleteTd = document.createElement("td");
+                const deleteBtn = document.createElement("button");
+                deleteBtn.textContent = "Delete";
+                deleteBtn.onclick = () => deleteRecord(tableName, record.id);
+                deleteTd.appendChild(deleteBtn);
+                tr.appendChild(deleteTd);
+
                 tableBody.appendChild(tr);
             });
         })
         .catch(error => console.error("Error fetching records:", error));
+}
+
+//  Delete Record Function
+function deleteRecord(tableName, id) {
+    
+    fetch(`http://localhost:3000/deleteRecord/${tableName}/${id}`, {
+        method: "DELETE"
+    })
+    .then(response => response.json())
+    .then(data => {
+        alert(data.message);
+        fetchRecords(); // Reload records after deletion
+    })
+    .catch(error => console.error("Error deleting record:", error));
 }

@@ -3,7 +3,7 @@ const app = express();
 const bodyParser = require('body-parser'); // ;
 const cors = require('cors'); 
 const connection = require('./models/db')
-const { data, getTables, getColumns, insertRecord, getRecords  } = require('./controller/userCtrl');
+const { data, getTables, getColumns, insertRecord, getRecords, deleteRecord } = require('./controller/userCtrl');
 
 app.use(bodyParser.urlencoded({extended:false}))
 
@@ -21,5 +21,5 @@ app.get('/getTables',getTables)
 app.get('/getColumns/:tableName', getColumns);
 app.post('/insertRecord', insertRecord);
 app.get('/getRecords/:tableName', getRecords);
-
+app.delete('/deleteRecord/:tableName/:id', deleteRecord);
 app.listen(3000)
