@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dynamic Record Management</title>
+</head>
+<body>
+    <h2>Select Table</h2>
+    <select id="tableDropdown" onchange="fetchColumns()">
+        <option value="">-- Select Table --</option>
+    </select>
+
+    <h2>Insert Record</h2>
+    <form id="recordForm">
+        <div id="columnInputs"></div>
+        <button type="submit">Insert Record</button>
+    </form>
+
+    <h2>Table Records</h2>
+    <button onclick="fetchRecords()">Load Records</button>
+    <table border="1">
+        <thead id="tableHead"></thead>
+        <tbody id="tableBody"></tbody>
+    </table>
+
+    <script src="./records.js"></script>
+</body>
+</html>

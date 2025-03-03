@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    
+</head>
+<body>
+    
+    <div class="formContainer">
+    <h2>Create Table</h2>
+    <form action="/createTable" method="post" >
+      <label for="tableName">Table Name:</label>
+      <input type="text" name="tableName" id="tableName" />
+      <br>
+      
+      <div class="options" id="options">
+      </div>
+      <br>
+      <button id="addField">Add Another Field</button>
+      <br>
+      <button type="submit" id="createTable">Create Table</button>
+
+      <a href="http://localhost:3000/tables.html">Show All Tables</a>
+    </form>
+    </div>
+    <script src="./script.js"></script>
+</body>
+</html>

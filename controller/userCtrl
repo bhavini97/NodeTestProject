@@ -1,0 +1,100 @@
+const  connection = require('../models/db');
+
+const data = (req, res) => {
+    try {
+        const { tableName, fields } = req.body;
+
+        if (!tableName || !fields || fields.length === 0) {
+            return res.status(400).json({ message: "Invalid table data" });
+        }
+
+        // Construct SQL query
+        let query = `CREATE TABLE ${tableName} (id INT AUTO_INCREMENT PRIMARY KEY, `;
+
+        fields.forEach((field, index) => {
+            query += `${field.columnName} ${field.columnType}`;
+            if (index !== fields.length - 1) {
+                query += ", ";
+            }
+        });
+
+        query += ")";
+
+        // Execute query
+         connection.query(query);
+        res.json({ message: `Table '${tableName}' created successfully!` });
+    } catch (error) {
+        console.error("Error creating table:", error);
+        res.status(500).json({ message: "Error creating table", error });
+    }
+};
+
+const getTables = (req, res) => {
+    const query = "SHOW TABLES";
+
+    connection.query(query, (err, result) => {
+        if (err) {
+            console.error("Error fetching tables:", err);
+            return res.status(500).json({ message: "Error fetching tables", error: err });
+        }
+
+        if (result.length === 0) {
+            return res.json({ tables: [] }); // Return empty array if no tables exist
+        }
+
+        const tables = result.map(row => Object.values(row)[0]);
+        res.json({ tables });
+    });
+};
+
+
+
+
+const getColumns = (req, res) => {
+    const { tableName } = req.params;
+    if (!tableName) return res.status(400).json({ message: "Table name is required" });
+    
+    const query = `SHOW COLUMNS FROM ${tableName}`;
+    
+    connection.query(query, (err, result) => {
+        if (err) return res.status(500).json({ message: "Error fetching columns", error: err });
+        
+        const columns = result.map(col => col.Field);
+        res.json({ columns });
+    });
+};
+
+const insertRecord = (req, res) => {
+    const { tableName, record } = req.body;
+    if (!tableName || !record) return res.status(400).json({ message: "Invalid data" });
+
+    const columns = Object.keys(record).join(", ");
+    const values = Object.values(record).map(value => `'${value}'`).join(", ");
+    const query = `INSERT INTO ${tableName} (${columns}) VALUES (${values})`;
+
+    connection.query(query, (err, result) => {
+        if (err) return res.status(500).json({ message: "Error inserting record", error: err });
+
+        res.json({ message: "Record inserted successfully!", insertedId: result.insertId });
+    });
+};
+
+
+const getRecords = (req, res) => {
+    const { tableName } = req.params;
+    if (!tableName) return res.status(400).json({ message: "Table name is required" });
+    
+    const query = `SELECT * FROM ${tableName}`;
+
+    connection.query(query, (err, result) => {
+        if (err) return res.status(500).json({ message: "Error fetching records", error: err });
+        
+        res.json({ records: result });
+    });
+};
+
+module.exports= {
+    data,
+    getTables,
+     getColumns, insertRecord, getRecords
+}
